@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unscrewly — We Unscrew The Boring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-color: #c9a84c;
+            --accent-glow: rgba(201, 168, 76, 0.3);
+            --card-bg: #111111;
+            --card-border: #1a1a1a;
+            --font-heading: 'Cormorant Garamond', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --transition-speed: 0.4s;
+            --container-width: 1200px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        html { scroll-behavior: smooth; background-color: var(--bg-color); }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-body); overflow-x: hidden; line-height: 1.6; }
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 2rem; }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; border-radius: 50%; }
+        .cursor-dot { width: 6px; height: 6px; background-color: var(--accent-color); transform: translate(-50%, -50%); }
+        .cursor-ring { width: 30px; height: 30px; border: 1px solid var(--accent-color); transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s; }
+        .cursor-ring.expand { width: 50px; height: 50px; background-color: var(--accent-glow); border: none; }
+        @media (max-width: 768px) { .cursor-dot, .cursor-ring { display: none; } * { cursor: auto; } }
+
+        /* Nav */
+        .nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; padding: 1.5rem 0; transition: background-color 0.3s, backdrop-filter 0.3s; }
+        .nav.scrolled { background-color: rgba(10,10,10,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--card-border); padding: 1rem 0; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--accent-color); letter-spacing: -1px; }
+        .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+        .nav-links a { text-decoration: none; color: var(--text-color); font-size: 0.9rem; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--accent-color); }
+        .cta-btn { padding: 0.8rem 1.5rem; background-color: var(--accent-color); color: var(--bg-color) !important; border-radius: 4px; font-weight: 700; transition: transform 0.3s, box-shadow 0.3s; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--accent-glow); }
+
+        /* ═══════════════════════════════════════════
+           HERO — Spotlight / Glow
+        ═══════════════════════════════════════════ */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Spotlight overlay */
+        .hero-spotlight {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(
+                600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(201, 168, 76, 0.12) 0%,
+                rgba(201, 168, 76, 0.04) 35%,
+                transparent 70%
+            );
+            transition: background 0.05s linear;
+        }
+
+        /* Subtle grid texture behind hero */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #hero-particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .glitch-text {
+            font-family: var(--font-heading);
+            font-size: clamp(3.5rem, 10vw, 7rem);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-color);
+            clip: rect(0, 0, 0, 0);
+        }
+        .glitch-text:hover::before { left: 2px; text-shadow: -2px 0 #ff00c1; animation: glitch-anim 2s infinite linear alternate-reverse; }
+        .glitch-text:hover::after { left: -2px; text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1; animation: glitch-anim2 3s infinite linear alternate-reverse; }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(44px, 9999px, 56px, 0); } 5% { clip: rect(12px, 9999px, 20px, 0); }
+            10% { clip: rect(33px, 9999px, 45px, 0); } 100% { clip: rect(88px, 9999px, 92px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(31px, 9999px, 41px, 0); } 100% { clip: rect(55px, 9999px, 66px, 0); }
+        }
+
+        .hero-subheading { font-size: 1.25rem; max-width: 600px; margin: 0 auto 3rem; color: rgba(255,255,255,0.7); font-weight: 400; }
+        .hero-ctas { display: flex; justify-content: center; gap: 1.5rem; }
+        .btn { padding: 1rem 2.5rem; border-radius: 4px; font-weight: 700; text-decoration: none; transition: all 0.3s ease; display: inline-block; }
+        .btn-primary { background-color: var(--accent-color); color: var(--bg-color); }
+        .btn-secondary { background-color: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-color); }
+        .btn:hover { transform: translateY(-5px); }
+        .btn-primary:hover { box-shadow: 0 10px 20px var(--accent-glow); }
+        .btn-secondary:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        /* Marquee */
+        .marquee { background: var(--accent-color); padding: 1rem 0; overflow: hidden; }
+        .marquee-content { display: flex; white-space: nowrap; animation: marquee 30s linear infinite; width: max-content; }
+        .marquee-content span { font-family: var(--font-body); font-weight: 700; font-size: 1.5rem; color: var(--bg-color); padding-right: 2rem; text-transform: uppercase; display: inline-block; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.33%); } }
+
+        /* Services */
+        .services { padding: 10rem 0; }
+        .section-title { font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4rem); text-align: center; margin-bottom: 5rem; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .service-card { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 3rem 2rem; border-radius: 12px; transition: border-color 0.3s, transform 0.1s; transform-style: preserve-3d; perspective: 1000px; }
+        .service-card:hover { border-color: var(--accent-color); }
+        .service-icon { color: var(--accent-color); margin-bottom: 2rem; }
+        .service-card h3 { font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 1rem; }
+        .service-card p { color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
+        .price-tag { display: block; font-weight: 700; color: var(--accent-color); }
+
+        /* How It Works */
+        .how-it-works { padding: 10rem 0; background-color: #0d0d0d; }
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 4rem; }
+        .step { position: relative; }
+        .step-number { font-family: var(--font-heading); font-size: 5rem; color: var(--accent-color); opacity: 0.1; position: absolute; top: -2rem; left: -1rem; }
+        .step h3 { font-family: var(--font-heading); font-size: 2rem; margin-bottom: 1.5rem; position: relative; z-index: 1; }
+        .step p { color: rgba(255,255,255,0.7); font-size: 1.1rem; }
+
+        /* Pricing */
+        .pricing { padding: 10rem 0; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: center; }
+        .pricing-card { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 4rem 2.5rem; border-radius: 12px; text-align: center; position: relative; }
+        .pricing-card.featured { border-color: var(--accent-color); background-color: #151515; transform: scale(1.05); z-index: 2; }
+        .popular-tag { position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%); background-color: var(--accent-color); color: var(--bg-color); padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: 700; border-radius: 20px; text-transform: uppercase; }
+        .pricing-card h3 { font-family: var(--font-heading); font-size: 2rem; margin-bottom: 1.5rem; }
+        .price { font-family: var(--font-heading); font-size: 3.5rem; font-weight: 700; margin-bottom: 2rem; color: var(--accent-color); }
+        .price span { font-size: 1.2rem; color: rgba(255,255,255,0.5); }
+        .pricing-card ul { list-style: none; margin-bottom: 3rem; text-align: left; }
+        .pricing-card ul li { margin-bottom: 1rem; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 0.8rem; }
+        .pricing-card ul li::before { content: '✓'; color: var(--accent-color); font-weight: 700; }
+        .btn-outline { background-color: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-color); width: 100%; }
+        .btn-outline:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        /* ═══════════════════════════════════════════
+           PRICE CALCULATOR
+        ═══════════════════════════════════════════ */
+        .calculator {
+            padding: 10rem 0;
+            background-color: #0d0d0d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative background lines */
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            pointer-events: none;
+        }
+
+        .calc-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        /* Left: Service selector */
+        .calc-left {}
+
+        .calc-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .services-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .service-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.25s, background 0.25s, transform 0.2s;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-toggle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(201,168,76,0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .service-toggle:hover {
+            border-color: rgba(201,168,76,0.4);
+            transform: translateX(4px);
+        }
+
+        .service-toggle:hover::before {
+            opacity: 1;
+        }
+
+        .service-toggle.active {
+            border-color: var(--accent-color);
+            background: #161610;
+        }
+
+        .service-toggle.active::before {
+            opacity: 1;
+        }
+
+        .toggle-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toggle-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(201,168,76,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+
+        .service-toggle.active .toggle-icon {
+            background: rgba(201,168,76,0.2);
+        }
+
+        .toggle-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .toggle-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .toggle-price {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.4);
+            font-weight: 500;
+            transition: color 0.25s;
+        }
+
+        .service-toggle.active .toggle-price {
+            color: var(--accent-color);
+        }
+
+        /* Custom checkbox */
+        .toggle-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 1.5px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+
+        .service-toggle.active .toggle-check {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .toggle-check svg {
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s;
+        }
+
+        .service-toggle.active .toggle-check svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Right: Result panel */
+        .calc-right {
+            position: sticky;
+            top: 120px;
+        }
+
+        .calc-result {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .calc-result.has-selection {
+            border-color: rgba(201,168,76,0.3);
+        }
+
+        .result-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .result-empty svg {
+            margin-bottom: 1.5rem;
+            opacity: 0.2;
+        }
+
+        .result-empty p {
+            font-size: 0.95rem;
+        }
+
+        .result-content {
+            display: none;
+        }
+
+        .result-content.visible {
+            display: block;
+        }
+
+        .result-empty.hidden {
+            display: none;
+        }
+
+        /* Selected services list */
+        .selected-list {
+            margin-bottom: 2rem;
+        }
+
+        .selected-list-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .selected-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .selected-item:last-child {
+            border-bottom: none;
+        }
+
+        .selected-item-name {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .selected-item-price {
+            color: rgba(255,255,255,0.5);
+            font-weight: 500;
+        }
+
+        /* Price breakdown */
+        .price-breakdown {
+            background: rgba(201,168,76,0.05);
+            border: 1px solid rgba(201,168,76,0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .breakdown-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .breakdown-label {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .breakdown-row.discount .breakdown-value {
+            color: #4ade80;
+        }
+
+        .breakdown-row.total-row {
+            border-top: 1px solid rgba(201,168,76,0.2);
+            padding-top: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .breakdown-row.total-row .breakdown-label {
+            font-weight: 700;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        /* Big price display */
+        .big-price {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .big-price-amount {
+            font-family: var(--font-heading);
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+            display: block;
+            transition: all 0.4s ease;
+        }
+
+        .big-price-period {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        /* Discount badge */
+        .discount-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-top: 0.5rem;
+            transition: opacity 0.3s;
+        }
+
+        .discount-badge.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Plan recommendation */
+        .plan-recommend {
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.4s ease;
+        }
+
+        .plan-recommend.starter {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .plan-recommend.growth {
+            background: rgba(201,168,76,0.08);
+            border: 1px solid rgba(201,168,76,0.3);
+        }
+
+        .plan-recommend.business {
+            background: rgba(139,92,246,0.08);
+            border: 1px solid rgba(139,92,246,0.3);
+        }
+
+        .plan-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .plan-text {}
+
+        .plan-name {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .plan-recommend.growth .plan-name { color: var(--accent-color); }
+        .plan-recommend.business .plan-name { color: #a78bfa; }
+
+        .plan-desc {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* CTA */
+        .calc-cta {
+            display: block;
+            width: 100%;
+            padding: 1.1rem;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calc-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px var(--accent-glow);
+        }
+
+        /* Count pill */
+        .count-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            transition: transform 0.2s;
+        }
+
+        /* Price number animation */
+        @keyframes priceFlip {
+            0% { transform: translateY(-10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .price-animate {
+            animation: priceFlip 0.35s ease forwards;
+        }
+
+        /* Contact */
+        .contact { padding: 10rem 0; background-color: #0d0d0d; }
+        .contact-content { max-width: 600px; margin: 0 auto; text-align: center; }
+        .contact-content p { margin-bottom: 3rem; font-size: 1.2rem; color: rgba(255,255,255,0.6); }
+        .contact-form { text-align: left; }
+        .form-group { margin-bottom: 1.5rem; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 1.2rem; background-color: var(--bg-color); border: 1px solid var(--card-border); color: var(--text-color); font-family: var(--font-body); border-radius: 8px; outline: none; transition: border-color 0.3s; }
+        .contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent-color); }
+        .contact-form .btn { width: 100%; margin-top: 1rem; }
+
+        /* Footer */
+        .footer { padding: 5rem 0; border-top: 1px solid var(--card-border); }
+        .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        .tagline { font-style: italic; color: rgba(255,255,255,0.5); }
+        .footer-bottom { text-align: center; font-size: 0.9rem; color: rgba(255,255,255,0.4); }
+
+        /* Reveal */
+        .reveal { opacity: 0; transform: translateY(30px); }
+
+        @media (max-width: 992px) {
+            .pricing-card.featured { transform: scale(1); }
+            .calc-wrapper { grid-template-columns: 1fr; }
+            .calc-right { position: static; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-ctas { flex-direction: column; }
+            .footer-top { flex-direction: column; gap: 2rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="container nav-content">
+            <div class="logo">Unscrewly</div>
+            <div class="nav-links">
+                <a href="#services">Services</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#calculator">Calculator</a>
+                <a href="#contact">Contact</a>
+                <a href="#contact" class="cta-btn">Get a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-spotlight" id="heroSpotlight"></div>
+        <canvas id="hero-particles"></canvas>
+        <div class="container hero-content">
+            <h1 class="glitch-text" data-text="We Unscrew The Boring">We Unscrew The Boring</h1>
+            <p class="hero-subheading">Premium automation workflows and custom apps for Indian small businesses. Scale your business while we handle the boring stuff.</p>
+            <div class="hero-ctas">
+                <a href="#services" class="btn btn-primary">See Our Work</a>
+                <a href="#contact" class="btn btn-secondary">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Marquee -->
+    <section class="marquee">
+        <div class="marquee-content">
+            <span>Lead Alerts · Invoice Automation · Appointment Bots · WhatsApp Bots · Google Sheets Automation · Custom Apps · </span>
+            <span>Lead Alerts · Invoice Automation · Appointment Bots · WhatsApp Bots · Google Sheets Automation · Custom Apps · </span>
+            <span>Lead Alerts · Invoice Automation · Appointment Bots · WhatsApp Bots · Google Sheets Automation · Custom Apps · </span>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card reveal" data-tilt>
+                    <div class="service-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"/><path d="M15 9h.01"/><path d="M15 13h.01"/><path d="M15 17h.01"/></svg>
+                    </div>
+                    <h3>Lead Alert System</h3>
+                    <p>Instant notifications for every lead. Never miss a customer again.</p>
+                    <span class="price-tag">Starting from ₹999</span>
+                </div>
+                <div class="service-card reveal" data-tilt>
+                    <div class="service-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                    </div>
+                    <h3>Appointment Bot</h3>
+                    <p>Automate bookings for your salon, studio, or clinic via WhatsApp.</p>
+                </div>
+                <div class="service-card reveal" data-tilt>
+                    <div class="service-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    </div>
+                    <h3>Custom Apps and Automations</h3>
+                    <p>Tailor-made workflows designed specifically for your unique business needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step reveal">
+                    <span class="step-number">01</span>
+                    <h3>You tell us the problem</h3>
+                    <p>Share your manual tasks and pain points with us during a quick demo call.</p>
+                </div>
+                <div class="step reveal">
+                    <span class="step-number">02</span>
+                    <h3>We build the automation</h3>
+                    <p>Our experts design and implement custom workflows that handle the heavy lifting.</p>
+                </div>
+                <div class="step reveal">
+                    <span class="step-number">03</span>
+                    <h3>You save hours every week</h3>
+                    <p>Watch your business run itself while you focus on what truly matters.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title">Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card reveal">
+                    <h3>Starter</h3>
+                    <div class="price">₹2,999<span>/yr</span></div>
+                    <ul>
+                        <li>Basic WhatsApp Bot</li>
+                        <li>Lead Alerts</li>
+                        <li>Email Support</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Choose Starter</a>
+                </div>
+                <div class="pricing-card featured reveal">
+                    <div class="popular-tag">Most Popular</div>
+                    <h3>Growth</h3>
+                    <div class="price">₹6,499<span>/yr</span></div>
+                    <ul>
+                        <li>Advanced Workflows</li>
+                        <li>Appointment Booking</li>
+                        <li>Priority Support</li>
+                        <li>Custom Dashboard</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">Choose Growth</a>
+                </div>
+                <div class="pricing-card reveal">
+                    <h3>Business</h3>
+                    <div class="price">₹9,999<span>/yr</span></div>
+                    <ul>
+                        <li>Full App Development</li>
+                        <li>Unlimited Automations</li>
+                        <li>24/7 Dedicated Support</li>
+                        <li>Enterprise Security</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Choose Business</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         PRICE CALCULATOR SECTION
+    ═══════════════════════════════════════════ -->
+    <section id="calculator" class="calculator">
+        <div class="container">
+            <h2 class="section-title reveal">Build Your <em style="color:var(--accent-color);font-style:italic;">Custom</em> Package</h2>
+            <div class="calc-wrapper">
+
+                <!-- Left: Service toggles -->
+                <div class="calc-left">
+                    <span class="calc-label">Select your services <span class="count-pill" id="countPill">0</span></span>
+                    <div class="services-selector" id="servicesSelector">
+
+                        <div class="service-toggle reveal" data-service="WhatsApp Bot" data-price="2500">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                </div>
+                                <span class="toggle-name">WhatsApp Bot</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹2,500</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-toggle reveal" data-service="Lead Alert System" data-price="1500">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                </div>
+                                <span class="toggle-name">Lead Alert System</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹1,500</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-toggle reveal" data-service="Appointment Bot" data-price="2000">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                                </div>
+                                <span class="toggle-name">Appointment Bot</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹2,000</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-toggle reveal" data-service="Google Sheets Automation" data-price="1200">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+                                </div>
+                                <span class="toggle-name">Google Sheets Automation</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹1,200</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-toggle reveal" data-service="Email Automation" data-price="1000">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                </div>
+                                <span class="toggle-name">Email Automation</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹1,000</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-toggle reveal" data-service="Invoice Generator" data-price="1800">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                                </div>
+                                <span class="toggle-name">Invoice Generator</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹1,800</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="service-toggle reveal" data-service="Rep Tracking" data-price="3000">
+                            <div class="toggle-left">
+                                <div class="toggle-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </div>
+                                <span class="toggle-name">Rep Tracking</span>
+                            </div>
+                            <div class="toggle-right">
+                                <span class="toggle-price">₹3,000</span>
+                                <div class="toggle-check">
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right: Result panel -->
+                <div class="calc-right">
+                    <div class="calc-result" id="calcResult">
+
+                        <!-- Empty state -->
+                        <div class="result-empty" id="resultEmpty">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+                            <p>Select services on the left<br>to build your quote.</p>
+                        </div>
+
+                        <!-- Result -->
+                        <div class="result-content" id="resultContent">
+
+                            <div class="big-price">
+                                <span class="big-price-amount" id="bigPrice">₹0</span>
+                                <span class="big-price-period">per year</span>
+                                <div style="display:flex;justify-content:center;margin-top:0.5rem;">
+                                    <span class="discount-badge hidden" id="discountBadge">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                        <span id="discountText">10% combo discount applied</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="selected-list">
+                                <span class="selected-list-label">Your selection</span>
+                                <div id="selectedItemsList"></div>
+                            </div>
+
+                            <div class="price-breakdown" id="priceBreakdown">
+                                <div class="breakdown-row">
+                                    <span class="breakdown-label">Subtotal</span>
+                                    <span class="breakdown-value" id="subtotalVal">₹0</span>
+                                </div>
+                                <div class="breakdown-row discount" id="discountRow" style="display:none;">
+                                    <span class="breakdown-label" id="discountLabel">Combo discount</span>
+                                    <span class="breakdown-value" id="discountVal">−₹0</span>
+                                </div>
+                                <div class="breakdown-row total-row">
+                                    <span class="breakdown-label">Total / year</span>
+                                    <span class="breakdown-value" id="totalVal">₹0</span>
+                                </div>
+                            </div>
+
+                            <div class="plan-recommend" id="planRecommend">
+                                <div class="plan-icon" id="planIcon">🚀</div>
+                                <div class="plan-text">
+                                    <div class="plan-name" id="planName">Growth Plan</div>
+                                    <div class="plan-desc" id="planDesc">Recommended based on your selection</div>
+                                </div>
+                            </div>
+
+                            <a href="#contact" class="calc-cta">Get This Package →</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content reveal">
+                <h2 class="section-title">Ready to Unscrew?</h2>
+                <p>Let's automate your business and reclaim your time.</p>
+                <form action="mailto:hello@unscrewly.com" method="post" enctype="text/plain" class="contact-form">
+                    <div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div>
+                    <div class="form-group"><input type="tel" name="whatsapp" placeholder="WhatsApp Number" required></div>
+                    <div class="form-group"><textarea name="problem" placeholder="Tell us your problem..." rows="5" required></textarea></div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="logo">Unscrewly</div>
+                <p class="tagline">"We Unscrew The Boring"</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Unscrewly. Built by a 15-year-old who automates things.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // ═══════════════════════════════════════════
+        // Custom Cursor
+        // ═══════════════════════════════════════════
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorRing = document.querySelector('.cursor-ring');
+        const interactables = document.querySelectorAll('a, button, .service-toggle, .service-card, .pricing-card');
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(cursorRing, { x: e.clientX, y: e.clientY, duration: 0.3 });
+        });
+
+        interactables.forEach(el => {
+            el.addEventListener('mouseenter', () => cursorRing.classList.add('expand'));
+            el.addEventListener('mouseleave', () => cursorRing.classList.remove('expand'));
+        });
+
+        // ═══════════════════════════════════════════
+        // Nav scroll
+        // ═══════════════════════════════════════════
+        const nav = document.querySelector('.nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ═══════════════════════════════════════════
+        // Hero Spotlight Effect
+        // ═══════════════════════════════════════════
+        const spotlight = document.getElementById('heroSpotlight');
+        const hero = document.querySelector('.hero');
+
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            spotlight.style.setProperty('--mouse-x', x + '%');
+            spotlight.style.setProperty('--mouse-y', y + '%');
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            // Drift back to center smoothly
+            gsap.to(spotlight, {
+                '--mouse-x': '50%',
+                '--mouse-y': '50%',
+                duration: 1.5,
+                ease: 'power2.out',
+                onUpdate: function() {}
+            });
+            spotlight.style.setProperty('--mouse-x', '50%');
+            spotlight.style.setProperty('--mouse-y', '50%');
+        });
+
+        // ═══════════════════════════════════════════
+        // Hero Particles
+        // ═══════════════════════════════════════════
+        const canvas = document.getElementById('hero-particles');
+        if (canvas && window.innerWidth > 768) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(201, 168, 76, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            };
+            animate();
+        }
+
+        // ═══════════════════════════════════════════
+        // Hero Parallax
+        // ═══════════════════════════════════════════
+        const heroContent = document.querySelector('.hero-content');
+        document.addEventListener('mousemove', (e) => {
+            if (window.innerWidth > 768) {
+                gsap.to(heroContent, {
+                    x: (e.clientX / window.innerWidth - 0.5) * 25,
+                    y: (e.clientY / window.innerHeight - 0.5) * 25,
+                    duration: 0.8,
+                    ease: 'power2.out'
+                });
+            }
+        });
+
+        // ═══════════════════════════════════════════
+        // 3D Tilt on service cards
+        // ═══════════════════════════════════════════
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                gsap.to(card, {
+                    rotateX: (y - rect.height / 2) / 10,
+                    rotateY: (rect.width / 2 - x) / 10,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.5, ease: 'power2.out' });
+            });
+        });
+
+        // ═══════════════════════════════════════════
+        // Scroll Reveal
+        // ═══════════════════════════════════════════
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    gsap.to(entry.target, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+        reveals.forEach(r => revealObserver.observe(r));
+
+        // ═══════════════════════════════════════════
+        // Glitch flicker
+        // ═══════════════════════════════════════════
+        const glitchText = document.querySelector('.glitch-text');
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                glitchText.style.opacity = '0.7';
+                setTimeout(() => { glitchText.style.opacity = '1'; }, 50);
+            }
+        }, 100);
+
+        // ═══════════════════════════════════════════
+        // Smooth scroll
+        // ═══════════════════════════════════════════
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+            });
+        });
+
+        // ═══════════════════════════════════════════
+        // PRICE CALCULATOR
+        // ═══════════════════════════════════════════
+        const toggles = document.querySelectorAll('.service-toggle');
+        const countPill = document.getElementById('countPill');
+        const resultEmpty = document.getElementById('resultEmpty');
+        const resultContent = document.getElementById('resultContent');
+        const calcResult = document.getElementById('calcResult');
+        const bigPrice = document.getElementById('bigPrice');
+        const subtotalVal = document.getElementById('subtotalVal');
+        const discountVal = document.getElementById('discountVal');
+        const discountLabel = document.getElementById('discountLabel');
+        const discountRow = document.getElementById('discountRow');
+        const totalVal = document.getElementById('totalVal');
+        const discountBadge = document.getElementById('discountBadge');
+        const discountText = document.getElementById('discountText');
+        const selectedItemsList = document.getElementById('selectedItemsList');
+        const planRecommend = document.getElementById('planRecommend');
+        const planIcon = document.getElementById('planIcon');
+        const planName = document.getElementById('planName');
+        const planDesc = document.getElementById('planDesc');
+
+        let selected = new Set();
+
+        function formatINR(amount) {
+            return '₹' + amount.toLocaleString('en-IN');
+        }
+
+        function animateNumber(el, newValue) {
+            el.classList.remove('price-animate');
+            void el.offsetWidth; // reflow
+            el.textContent = newValue;
+            el.classList.add('price-animate');
+        }
+
+        function updateCalculator() {
+            const count = selected.size;
+            countPill.textContent = count;
+
+            // Animate pill
+            gsap.fromTo(countPill, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out' });
+
+            if (count === 0) {
+                resultEmpty.classList.remove('hidden');
+                resultContent.classList.remove('visible');
+                calcResult.classList.remove('has-selection');
+                return;
+            }
+
+            resultEmpty.classList.add('hidden');
+            resultContent.classList.add('visible');
+            calcResult.classList.add('has-selection');
+
+            // Subtotal
+            let subtotal = 0;
+            selected.forEach(toggle => {
+                subtotal += parseInt(toggle.dataset.price);
+            });
+
+            // Discount
+            let discountPct = 0;
+            if (count === 3) discountPct = 10;
+            else if (count >= 4) discountPct = 15;
+
+            const discountAmt = Math.round(subtotal * discountPct / 100);
+            const total = subtotal - discountAmt;
+
+            // Update selected items list
+            selectedItemsList.innerHTML = '';
+            selected.forEach(toggle => {
+                const item = document.createElement('div');
+                item.className = 'selected-item';
+                item.innerHTML = `
+                    <span class="selected-item-name">${toggle.dataset.service}</span>
+                    <span class="selected-item-price">${formatINR(parseInt(toggle.dataset.price))}</span>
+                `;
+                selectedItemsList.appendChild(item);
+            });
+
+            // Update numbers
+            animateNumber(bigPrice, formatINR(total));
+            subtotalVal.textContent = formatINR(subtotal);
+            totalVal.textContent = formatINR(total);
+
+            if (discountPct > 0) {
+                discountRow.style.display = 'flex';
+                discountBadge.classList.remove('hidden');
+                discountVal.textContent = '−' + formatINR(discountAmt);
+                discountLabel.textContent = `${discountPct}% combo discount`;
+                discountText.textContent = `${discountPct}% combo discount applied`;
+            } else {
+                discountRow.style.display = 'none';
+                discountBadge.classList.add('hidden');
+            }
+
+            // Plan recommendation
+            planRecommend.className = 'plan-recommend';
+            if (total < 3500) {
+                planRecommend.classList.add('starter');
+                planIcon.textContent = '⚡';
+                planName.textContent = 'Starter Plan';
+                planDesc.textContent = 'Great for getting started with automation.';
+            } else if (total <= 8000) {
+                planRecommend.classList.add('growth');
+                planIcon.textContent = '🚀';
+                planName.textContent = 'Growth Plan ⭐';
+                planDesc.textContent = 'Most popular — perfect for scaling businesses.';
+            } else {
+                planRecommend.classList.add('business');
+                planIcon.textContent = '🏢';
+                planName.textContent = 'Business Plan';
+                planDesc.textContent = 'Full-power automation for serious businesses.';
+            }
+        }
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                if (selected.has(toggle)) {
+                    selected.delete(toggle);
+                    toggle.classList.remove('active');
+                    gsap.fromTo(toggle, { x: 4 }, { x: 0, duration: 0.2 });
+                } else {
+                    selected.add(toggle);
+                    toggle.classList.add('active');
+                    gsap.fromTo(toggle, { x: 0 }, { x: 4, duration: 0.15, yoyo: true, repeat: 1 });
+                }
+                updateCalculator();
+            });
+        });
+
+    });
+    </script>
+</body>
+</html>
