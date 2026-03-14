@@ -46,9 +46,6 @@
         .cta-btn { padding: 0.8rem 1.5rem; background-color: var(--accent-color); color: var(--bg-color) !important; border-radius: 4px; font-weight: 700; transition: transform 0.3s, box-shadow 0.3s; }
         .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--accent-glow); }
 
-        /* ═══════════════════════════════════════════
-           HERO — Spotlight / Glow
-        ═══════════════════════════════════════════ */
         .hero {
             height: 100vh;
             display: flex;
@@ -59,7 +56,6 @@
             text-align: center;
         }
 
-        /* Spotlight overlay */
         .hero-spotlight {
             position: absolute;
             inset: 0;
@@ -74,7 +70,6 @@
             transition: background 0.05s linear;
         }
 
-        /* Subtle grid texture behind hero */
         .hero::before {
             content: '';
             position: absolute;
@@ -172,9 +167,7 @@
         .btn-outline { background-color: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-color); width: 100%; }
         .btn-outline:hover { border-color: var(--accent-color); color: var(--accent-color); }
 
-        /* ═══════════════════════════════════════════
-           PRICE CALCULATOR
-        ═══════════════════════════════════════════ */
+        /* Calculator */
         .calculator {
             padding: 10rem 0;
             background-color: #0d0d0d;
@@ -182,7 +175,6 @@
             overflow: hidden;
         }
 
-        /* Decorative background lines */
         .calculator::before {
             content: '';
             position: absolute;
@@ -199,9 +191,6 @@
             gap: 4rem;
             align-items: start;
         }
-
-        /* Left: Service selector */
-        .calc-left {}
 
         .calc-label {
             font-size: 0.8rem;
@@ -248,18 +237,14 @@
             transform: translateX(4px);
         }
 
-        .service-toggle:hover::before {
-            opacity: 1;
-        }
+        .service-toggle:hover::before { opacity: 1; }
 
         .service-toggle.active {
             border-color: var(--accent-color);
             background: #161610;
         }
 
-        .service-toggle.active::before {
-            opacity: 1;
-        }
+        .service-toggle.active::before { opacity: 1; }
 
         .toggle-left {
             display: flex;
@@ -282,14 +267,9 @@
             flex-shrink: 0;
         }
 
-        .service-toggle.active .toggle-icon {
-            background: rgba(201,168,76,0.2);
-        }
+        .service-toggle.active .toggle-icon { background: rgba(201,168,76,0.2); }
 
-        .toggle-name {
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
+        .toggle-name { font-weight: 500; font-size: 0.95rem; }
 
         .toggle-right {
             display: flex;
@@ -306,11 +286,8 @@
             transition: color 0.25s;
         }
 
-        .service-toggle.active .toggle-price {
-            color: var(--accent-color);
-        }
+        .service-toggle.active .toggle-price { color: var(--accent-color); }
 
-        /* Custom checkbox */
         .toggle-check {
             width: 22px;
             height: 22px;
@@ -339,7 +316,6 @@
             transform: scale(1);
         }
 
-        /* Right: Result panel */
         .calc-right {
             position: sticky;
             top: 120px;
@@ -353,9 +329,7 @@
             transition: border-color 0.3s;
         }
 
-        .calc-result.has-selection {
-            border-color: rgba(201,168,76,0.3);
-        }
+        .calc-result.has-selection { border-color: rgba(201,168,76,0.3); }
 
         .result-empty {
             text-align: center;
@@ -363,31 +337,14 @@
             color: rgba(255,255,255,0.3);
         }
 
-        .result-empty svg {
-            margin-bottom: 1.5rem;
-            opacity: 0.2;
-        }
+        .result-empty svg { margin-bottom: 1.5rem; opacity: 0.2; }
+        .result-empty p { font-size: 0.95rem; }
 
-        .result-empty p {
-            font-size: 0.95rem;
-        }
+        .result-content { display: none; }
+        .result-content.visible { display: block; }
+        .result-empty.hidden { display: none; }
 
-        .result-content {
-            display: none;
-        }
-
-        .result-content.visible {
-            display: block;
-        }
-
-        .result-empty.hidden {
-            display: none;
-        }
-
-        /* Selected services list */
-        .selected-list {
-            margin-bottom: 2rem;
-        }
+        .selected-list { margin-bottom: 2rem; }
 
         .selected-list-label {
             font-size: 0.75rem;
@@ -408,20 +365,10 @@
             font-size: 0.9rem;
         }
 
-        .selected-item:last-child {
-            border-bottom: none;
-        }
+        .selected-item:last-child { border-bottom: none; }
+        .selected-item-name { color: rgba(255,255,255,0.7); }
+        .selected-item-price { color: rgba(255,255,255,0.5); font-weight: 500; }
 
-        .selected-item-name {
-            color: rgba(255,255,255,0.7);
-        }
-
-        .selected-item-price {
-            color: rgba(255,255,255,0.5);
-            font-weight: 500;
-        }
-
-        /* Price breakdown */
         .price-breakdown {
             background: rgba(201,168,76,0.05);
             border: 1px solid rgba(201,168,76,0.1);
@@ -438,22 +385,10 @@
             font-size: 0.9rem;
         }
 
-        .breakdown-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .breakdown-label {
-            color: rgba(255,255,255,0.5);
-        }
-
-        .breakdown-value {
-            font-weight: 600;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .breakdown-row.discount .breakdown-value {
-            color: #4ade80;
-        }
+        .breakdown-row:last-child { margin-bottom: 0; }
+        .breakdown-label { color: rgba(255,255,255,0.5); }
+        .breakdown-value { font-weight: 600; color: rgba(255,255,255,0.8); }
+        .breakdown-row.discount .breakdown-value { color: #4ade80; }
 
         .breakdown-row.total-row {
             border-top: 1px solid rgba(201,168,76,0.2);
@@ -467,7 +402,6 @@
             font-size: 1rem;
         }
 
-        /* Big price display */
         .big-price {
             text-align: center;
             margin-bottom: 2rem;
@@ -490,7 +424,6 @@
             display: block;
         }
 
-        /* Discount badge */
         .discount-badge {
             display: inline-flex;
             align-items: center;
@@ -506,12 +439,8 @@
             transition: opacity 0.3s;
         }
 
-        .discount-badge.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .discount-badge.hidden { opacity: 0; pointer-events: none; }
 
-        /* Plan recommendation */
         .plan-recommend {
             border-radius: 12px;
             padding: 1.25rem 1.5rem;
@@ -522,44 +451,17 @@
             transition: all 0.4s ease;
         }
 
-        .plan-recommend.starter {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .plan-recommend.starter { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
+        .plan-recommend.growth { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.3); }
+        .plan-recommend.business { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.3); }
 
-        .plan-recommend.growth {
-            background: rgba(201,168,76,0.08);
-            border: 1px solid rgba(201,168,76,0.3);
-        }
+        .plan-icon { font-size: 1.8rem; flex-shrink: 0; }
 
-        .plan-recommend.business {
-            background: rgba(139,92,246,0.08);
-            border: 1px solid rgba(139,92,246,0.3);
-        }
-
-        .plan-icon {
-            font-size: 1.8rem;
-            flex-shrink: 0;
-        }
-
-        .plan-text {}
-
-        .plan-name {
-            font-family: var(--font-heading);
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.2rem;
-        }
-
+        .plan-name { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem; }
         .plan-recommend.growth .plan-name { color: var(--accent-color); }
         .plan-recommend.business .plan-name { color: #a78bfa; }
+        .plan-desc { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
 
-        .plan-desc {
-            font-size: 0.82rem;
-            color: rgba(255,255,255,0.5);
-        }
-
-        /* CTA */
         .calc-cta {
             display: block;
             width: 100%;
@@ -577,12 +479,8 @@
             transition: all 0.3s;
         }
 
-        .calc-cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px var(--accent-glow);
-        }
+        .calc-cta:hover { transform: translateY(-3px); box-shadow: 0 10px 25px var(--accent-glow); }
 
-        /* Count pill */
         .count-pill {
             display: inline-flex;
             align-items: center;
@@ -598,17 +496,14 @@
             transition: transform 0.2s;
         }
 
-        /* Price number animation */
         @keyframes priceFlip {
             0% { transform: translateY(-10px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        .price-animate {
-            animation: priceFlip 0.35s ease forwards;
-        }
+        .price-animate { animation: priceFlip 0.35s ease forwards; }
 
-        /* Contact */
+        /* ── Contact ── */
         .contact { padding: 10rem 0; background-color: #0d0d0d; }
         .contact-content { max-width: 600px; margin: 0 auto; text-align: center; }
         .contact-content p { margin-bottom: 3rem; font-size: 1.2rem; color: rgba(255,255,255,0.6); }
@@ -618,11 +513,56 @@
         .contact-form input:focus, .contact-form textarea:focus { border-color: var(--accent-color); }
         .contact-form .btn { width: 100%; margin-top: 1rem; }
 
-        /* Footer */
+        /* Package pre-fill notice */
+        .package-notice {
+            display: none;
+            background: rgba(201,168,76,0.08);
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.7);
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .package-notice.visible { display: flex; }
+
+        .package-notice-icon {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .package-notice strong { color: var(--accent-color); }
+
+        /* ── Footer ── */
         .footer { padding: 5rem 0; border-top: 1px solid var(--card-border); }
-        .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3rem; }
         .tagline { font-style: italic; color: rgba(255,255,255,0.5); }
         .footer-bottom { text-align: center; font-size: 0.9rem; color: rgba(255,255,255,0.4); }
+
+        .footer-contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            align-items: flex-end;
+        }
+
+        .footer-contact-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-contact-link:hover { color: var(--accent-color); }
+
+        .footer-contact-link svg { color: var(--accent-color); flex-shrink: 0; }
 
         /* Reveal */
         .reveal { opacity: 0; transform: translateY(30px); }
@@ -636,7 +576,8 @@
         @media (max-width: 768px) {
             .nav-links { display: none; }
             .hero-ctas { flex-direction: column; }
-            .footer-top { flex-direction: column; gap: 2rem; text-align: center; }
+            .footer-top { flex-direction: column; gap: 2rem; }
+            .footer-contact-links { align-items: flex-start; }
         }
     </style>
 </head>
@@ -779,15 +720,12 @@
         </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         PRICE CALCULATOR SECTION
-    ═══════════════════════════════════════════ -->
+    <!-- Calculator -->
     <section id="calculator" class="calculator">
         <div class="container">
             <h2 class="section-title reveal">Build Your <em style="color:var(--accent-color);font-style:italic;">Custom</em> Package</h2>
             <div class="calc-wrapper">
 
-                <!-- Left: Service toggles -->
                 <div class="calc-left">
                     <span class="calc-label">Select your services <span class="count-pill" id="countPill">0</span></span>
                     <div class="services-selector" id="servicesSelector">
@@ -866,7 +804,8 @@
                                 </div>
                             </div>
                         </div>
-<div class="service-toggle reveal" data-service="AI Automation" data-price="3000">
+
+                        <div class="service-toggle reveal" data-service="AI Automation" data-price="3000">
                             <div class="toggle-left">
                                 <div class="toggle-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -918,13 +857,11 @@
                 <div class="calc-right">
                     <div class="calc-result" id="calcResult">
 
-                        <!-- Empty state -->
                         <div class="result-empty" id="resultEmpty">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
                             <p>Select services on the left<br>to build your quote.</p>
                         </div>
 
-                        <!-- Result -->
                         <div class="result-content" id="resultContent">
 
                             <div class="big-price">
@@ -966,7 +903,7 @@
                                 </div>
                             </div>
 
-                            <a href="#contact" class="calc-cta">Get This Package →</a>
+                            <a href="#contact" class="calc-cta" id="calcCtaBtn">Get This Package →</a>
                         </div>
 
                     </div>
@@ -981,11 +918,20 @@
             <div class="contact-content reveal">
                 <h2 class="section-title">Ready to Unscrew?</h2>
                 <p>Let's automate your business and reclaim your time.</p>
+
+                <!-- Package pre-fill notice -->
+                <div class="package-notice" id="packageNotice">
+                    <span class="package-notice-icon">✦</span>
+                    <span>Your selected package has been added below. Just fill in your details and send!</span>
+                </div>
+
                 <form name="contact" class="contact-form" method="POST" data-netlify="true">
                     <input type="hidden" name="form-name" value="contact">
                     <div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div>
                     <div class="form-group"><input type="tel" name="whatsapp" placeholder="WhatsApp Number" required></div>
-                    <div class="form-group"><textarea name="problem" placeholder="Tell us your problem..." rows="5" required></textarea></div>
+                    <div class="form-group">
+                        <textarea name="problem" id="contactMessage" placeholder="Tell us your problem..." rows="5" required></textarea>
+                    </div>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
             </div>
@@ -996,8 +942,20 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-top">
-                <div class="logo">Unscrewly</div>
-                <p class="tagline">"We Unscrew The Boring"</p>
+                <div>
+                    <div class="logo">Unscrewly</div>
+                    <p class="tagline" style="margin-top:0.5rem;">"We Unscrew The Boring"</p>
+                </div>
+                <div class="footer-contact-links">
+                    <a href="mailto:unscrewly@gmail.com" class="footer-contact-link">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        unscrewly@gmail.com
+                    </a>
+                    <a href="https://wa.me/919876543210" class="footer-contact-link" target="_blank" rel="noopener">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        +91 98765 43210
+                    </a>
+                </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2026 Unscrewly. Built by a 16-year-old who automates things.</p>
@@ -1008,9 +966,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // ═══════════════════════════════════════════
         // Custom Cursor
-        // ═══════════════════════════════════════════
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorRing = document.querySelector('.cursor-ring');
         const interactables = document.querySelectorAll('a, button, .service-toggle, .service-card, .pricing-card');
@@ -1025,17 +981,13 @@
             el.addEventListener('mouseleave', () => cursorRing.classList.remove('expand'));
         });
 
-        // ═══════════════════════════════════════════
         // Nav scroll
-        // ═══════════════════════════════════════════
         const nav = document.querySelector('.nav');
         window.addEventListener('scroll', () => {
             nav.classList.toggle('scrolled', window.scrollY > 50);
         });
 
-        // ═══════════════════════════════════════════
-        // Hero Spotlight Effect
-        // ═══════════════════════════════════════════
+        // Hero Spotlight
         const spotlight = document.getElementById('heroSpotlight');
         const hero = document.querySelector('.hero');
 
@@ -1048,21 +1000,11 @@
         });
 
         hero.addEventListener('mouseleave', () => {
-            // Drift back to center smoothly
-            gsap.to(spotlight, {
-                '--mouse-x': '50%',
-                '--mouse-y': '50%',
-                duration: 1.5,
-                ease: 'power2.out',
-                onUpdate: function() {}
-            });
             spotlight.style.setProperty('--mouse-x', '50%');
             spotlight.style.setProperty('--mouse-y', '50%');
         });
 
-        // ═══════════════════════════════════════════
         // Hero Particles
-        // ═══════════════════════════════════════════
         const canvas = document.getElementById('hero-particles');
         if (canvas && window.innerWidth > 768) {
             const ctx = canvas.getContext('2d');
@@ -1106,9 +1048,7 @@
             animate();
         }
 
-        // ═══════════════════════════════════════════
         // Hero Parallax
-        // ═══════════════════════════════════════════
         const heroContent = document.querySelector('.hero-content');
         document.addEventListener('mousemove', (e) => {
             if (window.innerWidth > 768) {
@@ -1121,9 +1061,7 @@
             }
         });
 
-        // ═══════════════════════════════════════════
         // 3D Tilt on service cards
-        // ═══════════════════════════════════════════
         document.querySelectorAll('.service-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -1141,9 +1079,7 @@
             });
         });
 
-        // ═══════════════════════════════════════════
         // Scroll Reveal
-        // ═══════════════════════════════════════════
         const reveals = document.querySelectorAll('.reveal');
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1156,9 +1092,7 @@
 
         reveals.forEach(r => revealObserver.observe(r));
 
-        // ═══════════════════════════════════════════
         // Glitch flicker
-        // ═══════════════════════════════════════════
         const glitchText = document.querySelector('.glitch-text');
         setInterval(() => {
             if (Math.random() > 0.95) {
@@ -1167,9 +1101,7 @@
             }
         }, 100);
 
-        // ═══════════════════════════════════════════
         // Smooth scroll
-        // ═══════════════════════════════════════════
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1200,6 +1132,10 @@
         const planName = document.getElementById('planName');
         const planDesc = document.getElementById('planDesc');
 
+        // Contact form fields
+        const contactMessage = document.getElementById('contactMessage');
+        const packageNotice = document.getElementById('packageNotice');
+
         let selected = new Set();
 
         function formatINR(amount) {
@@ -1208,22 +1144,48 @@
 
         function animateNumber(el, newValue) {
             el.classList.remove('price-animate');
-            void el.offsetWidth; // reflow
+            void el.offsetWidth;
             el.textContent = newValue;
             el.classList.add('price-animate');
+        }
+
+        // ─── Auto-fill contact textarea with selected package ───
+        function updateContactForm(serviceNames, total, discountPct) {
+            if (serviceNames.length === 0) {
+                contactMessage.placeholder = 'Tell us your problem...';
+                contactMessage.value = '';
+                packageNotice.classList.remove('visible');
+                return;
+            }
+
+            const serviceList = serviceNames.map(n => `  • ${n}`).join('\n');
+            const discountNote = discountPct > 0
+                ? `\nCombo Discount: ${discountPct}% applied`
+                : '';
+            const message =
+`Hi! I'm interested in the following Unscrewly package:
+
+${serviceList}
+${discountNote}
+Total: ${formatINR(total)} / year
+
+Please get in touch to get started.`;
+
+            contactMessage.value = message;
+            packageNotice.classList.add('visible');
         }
 
         function updateCalculator() {
             const count = selected.size;
             countPill.textContent = count;
 
-            // Animate pill
             gsap.fromTo(countPill, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out' });
 
             if (count === 0) {
                 resultEmpty.classList.remove('hidden');
                 resultContent.classList.remove('visible');
                 calcResult.classList.remove('has-selection');
+                updateContactForm([], 0, 0);
                 return;
             }
 
@@ -1231,13 +1193,13 @@
             resultContent.classList.add('visible');
             calcResult.classList.add('has-selection');
 
-            // Subtotal
             let subtotal = 0;
+            const serviceNames = [];
             selected.forEach(toggle => {
                 subtotal += parseInt(toggle.dataset.price);
+                serviceNames.push(toggle.dataset.service);
             });
 
-            // Discount
             let discountPct = 0;
             if (count === 3) discountPct = 10;
             else if (count >= 4) discountPct = 15;
@@ -1257,7 +1219,6 @@
                 selectedItemsList.appendChild(item);
             });
 
-            // Update numbers
             animateNumber(bigPrice, formatINR(total));
             subtotalVal.textContent = formatINR(subtotal);
             totalVal.textContent = formatINR(total);
@@ -1291,6 +1252,9 @@
                 planName.textContent = 'Business Plan';
                 planDesc.textContent = 'Full-power automation for serious businesses.';
             }
+
+            // Auto-fill contact form
+            updateContactForm(serviceNames, total, discountPct);
         }
 
         toggles.forEach(toggle => {
